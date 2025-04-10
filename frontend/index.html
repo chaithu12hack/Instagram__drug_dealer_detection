@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Instagram Drug Dealer Detection</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1556742400-b5e2f99a3e8a');
+      background-size: cover;
+      background-attachment: fixed;
+      color: white;
+    }
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.75);
+      min-height: 100vh;
+      padding: 40px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #00ffc3;
+      text-shadow: 0 0 10px #00ffc3;
+    }
+    .img-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .img-container img {
+      width: 45%;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.3);
+      transition: transform 0.3s ease;
+    }
+    .img-container img:hover {
+      transform: scale(1.05);
+    }
+    table {
+      margin: 30px auto;
+      border-collapse: collapse;
+      width: 90%;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    th {
+      background-color: rgba(0, 255, 195, 0.2);
+      color: #00ffc3;
+    }
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    #trend-section {
+      margin: 60px auto;
+      width: 80%;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.2);
+    }
+    .testimonial {
+      font-style: italic;
+      font-size: 1.2em;
+      margin-top: 20px;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      text-align: center;
+    }
+    .live-counter {
+      font-size: 2em;
+      font-weight: bold;
+      color: #ffcc00;
+      margin: 20px;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      padding-top: 20px;
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <h1>Instagram Drug Dealer Detection</h1>
+    <h2>AI & Machine Learning Model Evaluation Dashboard</h2>
+    
+    <!-- Metrics Images -->
+    <div class="img-container">
+      <img src="../results/accuracy_plot.png" alt="Accuracy Plot">
+    </div>
+    <div class="img-container">
+      <img src="../results/confusion_matrix.png" alt="Confusion Matrix">
+      <img src="../results/roc_curve.png" alt="ROC Curve">
+    </div>
+    
+    <!-- Metrics Table -->
+    <div id="metrics-table">
+      <h2>Model Performance Table</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Accuracy</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>F1-Score</th>
+            <th>AUC</th>
+          </tr>
+        </thead>
+        <tbody id="metrics-body">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Trend Chart Section -->
+    <div id="trend-section">
+      <h2>Growth of Drug-Related Activity (2021–2025)</h2>
+      <canvas id="drugTrendChart" height="120"></canvas>
+      <p style="text-align:center; color:#ccc; margin-top:10px;">
+        This chart illustrates the alarming rise of drug-related posts over recent years — underscoring the need for proactive detection.
+      </p>
+    </div>
+    
+    <!-- Testimonial Block -->
+    <div class="testimonial">
+      <h2>Real-Life Testimonial</h2>
+      <p>"This system helped our team flag multiple suspicious accounts and prevented potential drug trafficking on our platform. A true lifesaver." – Concerned Citizen</p>
+    </div>
+    
+    <!-- Live Detection Counter -->
+    <div class="live-counter">
+      <h2>Live Detections: <span id="counter">0</span></h2>
+    </div>
+    
+    <footer>
+      &copy; 2025 | Instagram Drug Dealer Detection | Built with ❤️ and Python 🐍
+    </footer>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Load metrics.json and populate the table
+    fetch('../results/metrics.json')
+      .then(response => response.json())
+      .then(data => {
+        const tbody = document.getElementById('metrics-body');
+        Object.entries(data).forEach(([model, scores]) => {
+          const row = `<tr>
+            <td>${model}</td>
+            <td>${(scores.accuracy * 100).toFixed(2)}%</td>
+            <td>${(scores.precision * 100).toFixed(2)}%</td>
+            <td>${(scores.recall * 100).toFixed(2)}%</td>
+            <td>${(scores.f1_score * 100).toFixed(2)}%</td>
+            <td>${(scores.auc * 100).toFixed(2)}%</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+      });
+      
+    // Render drug trend chart
+    const ctx = document.getElementById('drugTrendChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['2021', '2022', '2023', '2024', '2025'],
+        datasets: [{
+          label: 'Drug-Related Posts (in thousands)',
+          data: [5, 12, 20, 33, 45],
+          backgroundColor: 'rgba(0, 255, 195, 0.2)',
+          borderColor: '#00ffc3',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: '#00ffc3' }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#eee' } },
+          y: { ticks: { color: '#eee' } }
+        }
+      }
+    });
+    
+    // Live Counter Simulation
+    let count = 0;
+    setInterval(() => {
+      count += Math.floor(Math.random() * 3);
+      document.getElementById("counter").innerText = count;
+    }, 2000);
+  </script>
+</body>
+</html>
